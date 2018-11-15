@@ -2,29 +2,42 @@
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;}
 {\colortbl;\red255\green255\blue255;}
 {\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\margl1440\margr1440\vieww13300\viewh8400\viewkind0
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 
 \f0\fs24 \cf0 Approaches:\
-(1) Cluster counties based on outcomes\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\cf0 \ul \ulc0 Step 1\ulnone \
+(0) Some EDA - Gabe \
+(1) Cluster counties based on outcomes (Trevor)\
 	- Also captures similarity between diseases\
 (2) Cluster based on predictors\
-	- Probably PCA/CCA\
-	- Some type of prediction on clusters (weighted average)\
-(3) Do PCA/CCA/Elastic Net --> run regressions on this\
-	- RF\
+	- PCA on all features (Trevor)\
+	- PCA on tweets (Trevor)\
+	- PCA on demographics w/ clustered tweets (Trevor)\
+	- CCA of demographics vs tweets (Trevor)\
+	- GMM (Gabe)\
+	- K means (Gabe)\
+	- Maybe other variance-based clustering\
+\
+Done by Wednesday\
+\
+\ul Step 2:\ulnone  Given clusters, do prediction\
+- Some type of weighted average on clusters \
+- Elastic Net for further penalization\
+- RF\
+- Boosting\
+- Logistic Regression\
+- SVM\
+- NN\
+\
+(b) Run Regression based on raw features\
+	- Random Forest\
 	- Boosting\
-	- Logistic Regression\
-	- SVM\
-	- NN\
-(4) Run Regression based on raw features\
-	- \
-(5) Cluster Tweets based on \
-	- GMM\
-	- PCA\
-	- CCA\
-	- Other Variance clustering measure\
-(6) MTL algorithms\
+\
+\ul Step 3:\ulnone  Further work\
+- MTL algorithms\
 \
 Other questions:\
 - How do we regularize parameters in a clever way here or adopt a clever kernel?\
@@ -33,6 +46,10 @@ Other questions:\
 		- Education, etc. \
 	- Proportinal weightings on PC's to their variance explained\
 	- Kernel between \
-	- \
+\
+PCA\
+- Take top n features in, other things optional\
+\
+\
 \
 }
