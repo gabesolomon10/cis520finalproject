@@ -17,12 +17,8 @@ plot(explained_all)  % Appears to go way down by 50
 
 % let's just select the features that gets 80% of variance explained,
 % This happens at 123 variables included
-coeff_all = coeff_all(1:1018, 1:123);
-
 % Construct new X in reduced dimension feature space
-X_new = score_all*coeff_all;
-size(X_new)
-
+X_new = score_all(:, 1:123);
 
 % (2) Do PCA on tweets
 tweets = X(:,22:2021);
@@ -35,7 +31,7 @@ plot(cum_explained)
 % 8 tweet topic PCs explain 80% of variance
 % 35 tweet topic PCs explain 90% of the variance
 % USE THE 35 TOP TWEET PC'S NOW FOR 90%, THEN MAYBE REDUCE LATER
-tweets_new = score_tweets * coeff_tweets(1:1018, 1:35);
+tweets_new = score_tweets(:, 1:35);
 
 % (3) Now use these reduced-dimension PC's in another PCA with
 %     demographic features
@@ -50,4 +46,6 @@ for i = 1:size(cum_explained,1)
 end
 % We get 95% reconstruction accuracy using 35 PC's. This is what we will
 % use
-double_reduced_data = score_combo * coeff_combo(:, 1:35);
+double_reduced_data = score_combo(:, 1:35);
+
+% use tweet_reduced_X, X_new, double_deduced_data
