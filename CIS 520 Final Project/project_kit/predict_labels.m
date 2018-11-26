@@ -18,16 +18,71 @@ test_tweets = test_inputs(:,22:2021);
 test_tweets_PC = test_tweets * coeff_tweets(:, 1:35); % PC-reduced scores
 X_test = [test_inputs(:, 1:21), test_tweets_PC];
 
-% Compute RF model
-RF_models = cell(1, p);
-y_hat = NaN(size(test_inputs, 1), p);
-for j = 1:p
-        % Using 500 trees
-        RF_models{1, j} = TreeBagger(500, tweet_reduced_X,...
-            Y_train(:, j), 'Method','regression');
-        % Make prediction
-        y_hat(:, j) = predict(RF_models{1, j}, X_test);     
-end
-pred_labels = y_hat;
-end
+% % Compute RF model
+% RF_models = cell(1, p);
+% y_hat = NaN(size(test_inputs, 1), p);
+% for j = 1:p
+%         % Using 500 trees
+%         RF_models{1, j} = TreeBagger(500, tweet_reduced_X,...
+%             Y_train(:, j), 'Method','regression');
+%         % Make prediction
+%         y_hat(:, j) = predict(RF_models{1, j}, X_test);     
+% end
+% pred_labels = y_hat;
 
+
+%Now do GMM clustering
+rng(4);
+
+socioecon = X(:,1:21);
+%12 is best cluster
+
+GMModel = fitgmdist(socioecon,12,'Start', 'randSample','RegularizationValue',0.1);
+cluster_assignment_train = cluster(GMModel, socioecon);
+cluster_X = [tweet_reduced_X cluster_assignment_train];
+
+cluster_assignment_test = cluster(GMModel, X_test(:,1:21));
+X_test = [X_test cluster_assignment_test];
+
+% Compute RF model
+RF_models_GMM = cell(12, p);
+y_hat_GMM = NaN(size(test_inputs, 1), p);
+
+X_test_predict = zeros(size(X_test,1), size(X_test,2)+1);
+for i = 1:size(X_test,1)
+     X_test_predict(i,:) = [X_test(i,:) i];
+end
+        
+for c = 1:12
+    for j = 1:p
+        % Using 1000 trees
+        ind = cluster_X(:,end) == c;
+        X_clustered = cluster_X(ind,:);
+        
+        RF_models{c, j} = TreeBagger(500, X_clustered(:,1:end-1),...
+            Y_train(ind, j), 'Method','regression');
+        
+        % Make prediction
+        
+        %First add row number to each row
+
+        %Get indices of cluster
+        orig_indices = find(X_test_predict(:,end-1) == c);
+        ind = X_test_predict(:,end) == c;
+        temp_test = X_test_predict(ind,1:end-2);
+        % temporary on each loop to hold indices of each cluster in orig d
+        
+        results = predict(RF_models{c, j}, temp_test);
+
+        %Loop through results matrix to find right place
+        
+        for i = 1:size(results,1)
+            y_hat_GMM(orig_indices(i),:) = results(i,:);
+        end
+                
+    end
+end
+pred_labels = y_hat_GMM;
+
+
+end
