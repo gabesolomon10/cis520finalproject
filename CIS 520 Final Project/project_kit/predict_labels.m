@@ -34,65 +34,66 @@ X_test = [test_inputs(:, 1:21), test_tweets_PC];
 %Now do GMM clustering
 rng(4);
 
-socioecon = X(:,1:21);
+%socioecon = X(:,1:21);
 %12 is best cluster
 
-GMModel = fitgmdist(socioecon,12,'Start', 'randSample','RegularizationValue',0.1);
-cluster_assignment_train = cluster(GMModel, socioecon);
+C = 5;
+GMModel = fitgmdist(tweet_reduced_X,C,'Start', 'randSample','RegularizationValue',0.1);
+cluster_assignment_train = cluster(GMModel, tweet_reduced_X);
 cluster_X = [tweet_reduced_X cluster_assignment_train];
 
-cluster_assignment_test = cluster(GMModel, X_test(:,1:21));
+cluster_assignment_test = cluster(GMModel, X_test);
 X_test = [X_test cluster_assignment_test];
 
-% Compute RF on clusters overall
-RF_models_GMM = cell(1, p);
-y_hat = NaN(size(test_inputs, 1), p);
-for j = 1:p
-        % Using 500 trees
-        RF_models_GMM{1, j} = TreeBagger(500, cluster_X,...
-            Y_train(:, j), 'Method','regression');
-        % Make prediction
-        y_hat(:, j) = predict(RF_models_GMM{1, j}, X_test);     
-end
-pred_labels = y_hat;
-
-
-
-% % Compute RF model
-% RF_models_GMM = cell(12, p);
-% y_hat_GMM = NaN(size(test_inputs, 1), p);
-% 
-% for c = 1:12
-%     disp(strcat("cluster", num2str(c)))
-%     for j = 1:p
-%         % Using 1000 trees
-%         ind = find(cluster_X(:,end) == c);
-%         X_clustered = cluster_X(ind,:);
-%         
-%         RF_models{c, j} = TreeBagger(500, X_clustered(:,1:end-1),...
-%             Y_train(ind, j), 'Method','regression');
-%         
+% % Compute RF on clusters overall
+% RF_models_GMM = cell(1, p);
+% y_hat = NaN(size(test_inputs, 1), p);
+% for j = 1:p
+%         % Using 500 trees
+%         RF_models_GMM{1, j} = TreeBagger(500, cluster_X,...
+%             Y_train(:, j), 'Method','regression');
 %         % Make prediction
-%         
-%         %First add row number to each row
-% 
-%         %Get indices of cluster
-%         orig_indices = find(X_test(:,end) == c);
-%         ind = find(X_test(:,end) == c);
-%         
-%         temp_test = X_test(ind,1:end-1);
-%        
-%         % temporary on each loop to hold indices of each cluster in orig d
-%         results = predict(RF_models{c, j}, temp_test);
-%         
-%         %Loop through results matrix to find right place
-%         for i = 1:size(results,1)
-%             y_hat_GMM(orig_indices(i),j) = results(i,:);
-%         end
-%                 
-%     end
+%         y_hat(:, j) = predict(RF_models_GMM{1, j}, X_test);     
 % end
-%pred_labels_2 = y_hat_GMM;
+% pred_labels = y_hat;
+
+
+
+% Compute RF model
+RF_models_GMM = cell(C, p);
+y_hat_GMM = NaN(size(test_inputs, 1), p);
+
+for c = 1:C
+    disp(strcat("cluster", num2str(c)))
+    for j = 1:p
+        % Using 1000 trees
+        ind = find(cluster_X(:,end) == c);
+        X_clustered = cluster_X(ind,:);
+        
+        RF_models{c, j} = TreeBagger(500, X_clustered(:,1:end-1),...
+            Y_train(ind, j), 'Method','regression');
+        
+        % Make prediction
+        
+        %First add row number to each row
+
+        %Get indices of cluster
+        orig_indices = find(X_test(:,end) == c);
+        ind = find(X_test(:,end) == c);
+        
+        temp_test = X_test(ind,1:end-1);
+       
+        % temporary on each loop to hold indices of each cluster in orig d
+        results = predict(RF_models{c, j}, temp_test);
+        
+        %Loop through results matrix to find right place
+        for i = 1:size(results,1)
+            y_hat_GMM(orig_indices(i),j) = results(i,:);
+        end
+                
+    end
+end
+pred_labels = y_hat_GMM;
 
 %pred_labels = (pred_labels_1 + pred_labels_2) / 2;
 
