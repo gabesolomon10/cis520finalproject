@@ -1,0 +1,70 @@
+---
+title: "CIS 520 Final Project EDA"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+  knitr::opts_chunk$set(tidy=TRUE,fig.align='middle', dev = 'pdf', warning=F, message=F)
+  library(MASS)
+  library(lattice)
+  library(leaps)
+  library(ISLR)
+  library(ggplot2)
+  library(glmnet)
+  library(bestglm)
+  library(pROC)
+  library(dplyr)
+  library(ggthemes)
+  library(scales)
+  library(xtable)
+  if (!require("pacman")) install.packages("pacman")
+  pacman::p_load(randomForest, tree, rpart, pROC, partykit)
+  set.seed(1243)
+```
+
+## Including Plots
+
+
+```{r data, echo=FALSE}
+training_data <- read.csv("training_data.csv", header=T)
+training_data_df <- data.frame(training_data)
+sampled_training_data <- sample_n(training_data_df, 300)
+
+ses_factors <- sampled_training_data[c(2:22)]
+tweet_factors <- sampled_training_data[c(23:2023)]
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+#Get some initial histograms
+hist(ses_factors$demo_65over)
+hist(ses_factors$ses_edu_coll)
+hist(ses_factors$ses_incomeratio)
+hist(ses_factors$ses_pcrural)
+
+```
+
+```{r}
+#Correlation Table
+mcor<-round(cor(ses_factors),2)
+upper<-mcor
+upper[upper.tri(mcor)]<-""
+upper<-as.data.frame(upper)
+upper
+```
+
+```{r}
+
+```
+
