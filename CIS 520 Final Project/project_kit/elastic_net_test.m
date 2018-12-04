@@ -11,3 +11,6 @@ X_test = X(randpermutation(900:1019),:);
 Y_test = Y(randpermutation(900:1019),:);
 
 y_hat = elastic_net(X_train,Y_train,X_test);
+
+error = error_metric(y_hat,Y_test);
+error
