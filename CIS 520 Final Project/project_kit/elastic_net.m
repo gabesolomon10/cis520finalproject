@@ -1,7 +1,7 @@
 %Elastic Net
 function y_hat = elastic_net(train_inputs,train_labels,test_inputs)
 
-rng(4);
+rng(85);
 
 X = train_inputs;
 Y = train_labels;
