@@ -21,6 +21,21 @@ Description: Our generative method we used here was PCA. Specifically, we used P
 
 Additional Training Details: 
 	We selected 35 principal components from the tweets because, after cross-validation, we found that using the 35 largest principal components explained 90% of the variance. Note that other PCA combinations were tried, but examining test error results of different random forest models showed PCA on the tweets alone to be the most effective.
+	
+————————————————————————————————————
+Discriminative Method: Elastic Net
+————————————————————————————————————
+Description: The discriminative method we used was an elastic net.  We took logs of the tweet data (columns 22-end), because probabilites are better understood in log-space.  We then fit nine separate elastic net regressions, one for each of the outcome variables, each with an alpha value of .75.  After constructing nine separate elastic nets, we combined the predictions together to create a final matrix of nine predictions, one for each outcome variable. 
+
+-predict_labels_elastic_net.m: This file contains the elastic net function used for the discriminiative method, as well as the leaderboard submission.  This function takes in the training data, takes the logs of all the LDA probabilities for each topic, and then fits nine separate elastic net regressions, one for each of the nine outcome variables.  The nine outcome vectors and then concatenated together to create a final prediction matrix for each input.
+
+-elastic_net_hyperparameter_search.m: This file contains a test across different alpha values in the elastic net.  For each of the nine elastic net regressions in predict_labels_elastic_net, the alpha value is tested across the range [,5,.7,.9] and cross-validated to find the best alpha value for each of the nine elastic net regressions.
+
+-elastic_net2.m: This file is very similar to predict_labels_elastic_net, but with the alpha hyperparameter for each elastic net set to .5, not .75.  This was done as a testing procedure.
+
+-elastic_net3.m: This file is very similar to predict_labels_elastic_net, but with a few small transformations on the socioeconomic data. No noticable improvements were recorded, so this file was not really used much.
+
+-elastic_net_test.m: This function divides the data given into pseudo test and training sets in order to test the accuracy of the predict_labels_elastic_net function.
 
 
 
