@@ -25,6 +25,8 @@ Additional Training Details:
 ————————————————————————————————————
 Discriminative Method: Elastic Net
 ————————————————————————————————————
+Folder: Elastic_Net
+
 Description: The discriminative method we used was an elastic net.  We took logs of the tweet data (columns 22-end), because probabilites are better understood in log-space.  We then fit nine separate elastic net regressions, one for each of the outcome variables, each with an alpha value of .75.  After constructing nine separate elastic nets, we combined the predictions together to create a final matrix of nine predictions, one for each outcome variable. 
 
 -predict_labels_elastic_net.m: This file contains the elastic net function used for the discriminiative method, as well as the leaderboard submission.  This function takes in the training data, takes the logs of all the LDA probabilities for each topic, and then fits nine separate elastic net regressions, one for each of the nine outcome variables.  The nine outcome vectors and then concatenated together to create a final prediction matrix for each input.
